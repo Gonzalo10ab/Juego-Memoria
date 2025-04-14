@@ -1,75 +1,77 @@
-/* ESTILOS POR DEFINIR, ESTOS SON UNA BASE */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-/* Fondo general */
 body {
-    background-color: #222;
-    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-/* Panel superior con contador y botón */
-#info-panel {
-    margin-bottom: 20px;
-}
-
+    padding: 40px 20px;
+    color: white;
+  }
+  
+  #info-panel {
+    margin-bottom: 30px;
+    font-size: 18px;
+    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
 #reiniciar-btn {
-    margin-left: 15px;
-    padding: 5px 10px;
-}
+    margin-left: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    backdrop-filter: blur(5px);
+  }
+  
+  #reiniciar-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
 
-/* Tablero */
-#game-board {
+  #game-board {
     display: grid;
-    grid-template-columns: repeat(4, 100px); /* Tablero 4x4 */
-    gap: 10px;
-}
-
-/* Carta base */
-.card {
+    grid-template-columns: repeat(4, 100px);
+    gap: 14px;
+  }
+  .card {
     width: 100px;
     height: 100px;
-    perspective: 600px;
-    position: relative;
-}
-
-/* Caras de la carta */
-.cara {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    backface-visibility: hidden;
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    backdrop-filter: blur(6px);
+    color: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
-    transition: transform 0.4s;
-}
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
 
-/* Parte trasera (lo que se ve antes de girar) */
-.cara-trasera {
-    background-color: gray;
-}
-
-/* Parte frontal (la letra) */
-.cara-frontal {
-    background-color: red;
+  .card.volteada {
     color: white;
-    transform: rotateY(180deg);
-}
-
-/* Gira la carta */
-.card.volteada .cara-frontal {
-    transform: rotateY(0deg);
-}
-
-.card.volteada .cara-trasera {
-    transform: rotateY(180deg);
-}
+    background: rgba(33, 150, 243, 0.3);
+    border: 1px solid rgba(33, 150, 243, 0.5);
+  }
+  
+  .card.acertada {
+    background: rgba(76, 175, 80, 0.3);
+    border: 1px solid rgba(76, 175, 80, 0.6);
+    box-shadow: 0 0 12px rgba(76, 175, 80, 0.7);
+    color: white;
+    cursor: default;
+  }
+  
