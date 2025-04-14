@@ -6,8 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const spanContador = document.getElementById("contador");
     const botonReiniciar = document.getElementById("reiniciar-btn");
 
+    let tiempo = 0;
+    let intervaloTiempo;
+
     // Creamos una lista de letras que representarán las cartas únicas
-    const cartasUnicas = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']; // 8 tipos de carta
+    const cartasUnicas = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']; // 8 tipos de carta
 
     // Función que genera y pinta las cartas en el tablero
     function iniciarJuego() {
@@ -23,6 +26,49 @@ document.addEventListener("DOMContentLoaded", () => {
         let bloqueado = false; // Evitamos que se pueda hacer click mientras se comparan cartas
         let intentos = 0;
         spanContador.textContent = intentos;
+
+        // Obtenemos el elemento donde se mostrará el tiempo en pantalla
+        const spanTiempo = document.getElementById("tiempo");
+
+        // Establecemos el tiempo inicial (en segundos)
+        // Aquí se ha puesto 5 para pruebas, pero puede ser 40, 60, etc.
+        tiempo = 5;
+
+        // Si había un cronómetro ya funcionando, lo detenemos antes de empezar uno nuevo
+        clearInterval(intervaloTiempo);
+
+        // Función que actualiza visualmente el cronómetro en pantalla
+        // Convierte los segundos en formato mm:ss y lo muestra en el <span>
+        const actualizarPantallaTiempo = () => {
+            const minutos = String(Math.floor(tiempo / 60)).padStart(2, "0"); // Convierte los minutos a dos dígitos
+            const segundos = String(tiempo % 60).padStart(2, "0");            // Convierte los segundos a dos dígitos
+            spanTiempo.textContent = `${minutos}:${segundos}`;               // Ejemplo: 00:40
+        };
+
+        actualizarPantallaTiempo(); // Mostrar tiempo inicial
+
+        // Iniciamos el cronómetro: cada 1000 ms (1 segundo), se ejecuta la función
+        intervaloTiempo = setInterval(() => {
+            //Reducimos el tiempo en 1 segundo
+            tiempo--;
+
+            // Si el tiempo llega a menos de 0, se ha terminado la cuenta atrás (Se pone menos que 0 para que el crono muestre el 00:00)
+            if (tiempo < 0) {
+                // Detenemos el cronómetro
+                clearInterval(intervaloTiempo);
+
+                // ALERTA QUE HAY QUE CAMBIAR
+                alert("Tiempo acabado");
+                // Reiniciamos automáticamente la partida
+                iniciarJuego();
+                return;
+            }
+
+            // Actualizamos la pantalla con el nuevo valor de tiempo
+            actualizarPantallaTiempo();
+
+        }, 1000); // Intervalo de 1 segundo (1000 milisegundos)
+
 
         // Limpiamos el tablero por si hay cartas anteriores
         tablero.innerHTML = "";
@@ -80,8 +126,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             const cartasRestantes = document.querySelectorAll(".card:not(.acertada)");
                             // Si no hay cartas restantes, mostramos una alerta
                             if (cartasRestantes.length === 0) {
-                                setTimeout(() => {
+                                // Paramos el cronómetro al ganar
+                                clearInterval(intervaloTiempo);
 
+                                setTimeout(() => {
                                     // MODIFICAR ALERTA PARA EL FUTURO
                                     alert(`Enhorabuena pichita, lo has conseguido en ${intentos} intentos.`);
                                 }, 300); // Esperamos un poco para que se vea el último giro
