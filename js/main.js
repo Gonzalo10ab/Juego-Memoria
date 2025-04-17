@@ -1,172 +1,275 @@
 // Esperamos a que el documento esté completamente cargado antes de ejecutar el código
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Obtenemos el elemento HTML
-    const tablero = document.getElementById("game-board");
-    const spanContador = document.getElementById("contador");
-    const botonReiniciar = document.getElementById("reiniciar-btn");
+    // Obtenemos los elementos HTML
+    const tablero = document.getElementById("game-board"); // Donde se colocan las cartas
+    const spanContador = document.getElementById("contador"); // Contador de intentos
+    const botonReiniciar = document.getElementById("reiniciar-btn"); // Botón para reiniciar
+    const spanTiempo = document.getElementById("tiempo"); // Muestra el cronómetro
+    const botonPowerup = document.getElementById("powerup-revelar"); // Botón para usar el powerup
 
-    let tiempo = 0;
-    let intervaloTiempo;
+    // Selectores del menú
+    const selectorCategoria = document.getElementById("selector-categoria");
+    const selectorNivel = document.getElementById("selector-nivel");
+    const botonJugar = document.getElementById("boton-jugar");
 
-    // Creamos una lista de letras que representarán las cartas únicas
-    const cartasUnicas = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']; // 8 tipos de carta
+    // === VARIABLES GLOBALES ===
+    let categoriaActual = categorias.frutas; // Categoría por defecto
+    let nivelActual = 1; // Nivel por defecto
+    let config = niveles[nivelActual]; // Configuración inicial del nivel
 
-    // Función que genera y pinta las cartas en el tablero
-    function iniciarJuego() {
-        // Duplicamos el array para que haya 2 de cada una (parejas)
-        const cartas = [...cartasUnicas, ...cartasUnicas]; // Esto es igual a ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+    let tiempo = 0; // Tiempo transcurrido o restante
+    let intervaloTiempo; // Referencia al intervalo del cronómetro
 
-        // Barajamos las cartas para que el orden sea aleatorio
-        barajarArray(cartas);
+    // === FUNCIONES AUXILIARES ===
 
-        // Estas dos variables nos ayudan a llevar el control del turno
-        let primeraCarta = null;
-        let segundaCarta = null;
-        let bloqueado = false; // Evitamos que se pueda hacer click mientras se comparan cartas
-        let intentos = 0;
-        spanContador.textContent = intentos;
+    // Muestra el número de intentos en pantalla
+    function actualizarContador(valor) {
+        spanContador.textContent = valor;
+    }
 
-        // Obtenemos el elemento donde se mostrará el tiempo en pantalla
-        const spanTiempo = document.getElementById("tiempo");
+    // Convierte un número de segundos a formato mm:ss
+    function formatearTiempo(segundos) {
+        const minutos = String(Math.floor(segundos / 60)).padStart(2, "0");
+        const segs = String(segundos % 60).padStart(2, "0");
+        return `${minutos}:${segs}`;
+    }
 
-        // Establecemos el tiempo inicial (en segundos)
-        // Aquí se ha puesto 5 para pruebas, pero puede ser 40, 60, etc.
-        tiempo = 5;
+    // Actualiza el cronómetro en la pantalla con el formato correcto
+    function actualizarPantallaTiempo() {
+        spanTiempo.textContent = formatearTiempo(tiempo);
+    }
 
-        // Si había un cronómetro ya funcionando, lo detenemos antes de empezar uno nuevo
-        clearInterval(intervaloTiempo);
+    // Muestra un mensaje final de victoria al completar el juego
+    function mostrarMensajeFinal(intentos) {
+        // Esperamos un poco antes de mostrarlo para que el último giro se vea
+        setTimeout(() => {
+            alert(`Enhorabuena pichita, lo has conseguido en ${intentos} intentos.`); // CAMBIAR POR UNA ALERTA CHULA
+        }, 300);
+    }
 
-        // Función que actualiza visualmente el cronómetro en pantalla
-        // Convierte los segundos en formato mm:ss y lo muestra en el <span>
-        const actualizarPantallaTiempo = () => {
-            const minutos = String(Math.floor(tiempo / 60)).padStart(2, "0"); // Convierte los minutos a dos dígitos
-            const segundos = String(tiempo % 60).padStart(2, "0");            // Convierte los segundos a dos dígitos
-            spanTiempo.textContent = `${minutos}:${segundos}`;               // Ejemplo: 00:40
-        };
+    // Crea dinámicamente una carta con su estructura HTML
+    function crearCarta(cartaData) {
+        const carta = document.createElement("div");
+        carta.classList.add("card");
+        carta.dataset.clave = cartaData.clave; // Se guarda la clave como atributo personalizado
+        carta.innerHTML =
+            `<div class="cara cara-trasera"></div>
+            <div class="cara cara-frontal">
+                <img src="${cartaData.src}" alt="${cartaData.clave}">
+            </div>`;
+        return carta;
+    }
 
-        actualizarPantallaTiempo(); // Mostrar tiempo inicial
+    // Función que baraja un array usando el algoritmo Fisher-Yates
+    function barajarArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));  // Índice aleatorio entre 0 e i
+            [array[i], array[j]] = [array[j], array[i]];    // Intercambiamos los elementos
+        }
+    }
 
-        // Iniciamos el cronómetro: cada 1000 ms (1 segundo), se ejecuta la función
+    // Inicia el cronómetro para abajo (modo contrarreloj)
+    function iniciarCronometroRegresivo() {
+        tiempo = 40; // Tiempo total en segundos
+        clearInterval(intervaloTiempo); // Aseguramos que no haya un intervalo anterior activo
+        actualizarPantallaTiempo();
         intervaloTiempo = setInterval(() => {
-            //Reducimos el tiempo en 1 segundo
             tiempo--;
-
-            // Si el tiempo llega a menos de 0, se ha terminado la cuenta atrás (Se pone menos que 0 para que el crono muestre el 00:00)
             if (tiempo < 0) {
-                // Detenemos el cronómetro
                 clearInterval(intervaloTiempo);
-
-                // ALERTA QUE HAY QUE CAMBIAR
-                alert("Tiempo acabado");
-                // Reiniciamos automáticamente la partida
-                iniciarJuego();
+                alert("¡Tiempo agotado!");  // CAMBIAR POR UNA ALERTA CHULA
+                iniciarJuego(); // Reiniciamos el juego automáticamente
                 return;
             }
-
-            // Actualizamos la pantalla con el nuevo valor de tiempo
             actualizarPantallaTiempo();
+        }, 1000); // Cada segundo se actualiza
+    }
 
-        }, 1000); // Intervalo de 1 segundo (1000 milisegundos)
+    // Inicia el cronómetro ascendente (modo sin tiempo límite)
+    function iniciarCronometroNormal() {
+        tiempo = 0;
+        clearInterval(intervaloTiempo);
+        intervaloTiempo = setInterval(() => {
+            tiempo++;
+            actualizarPantallaTiempo();
+        }, 1000);
+    }
+
+    // Activa el botón de power-up
+    function activarPowerups() {
+        botonPowerup.style.display = "inline-block";
+        botonPowerup.disabled = false;
+    }
+
+    // Desactiva y oculta el botón de power-up
+    function desactivarPowerups() {
+        botonPowerup.style.display = "none";
+        botonPowerup.disabled = true;
+    }
+
+    // Power-up que muestra temporalmente todas las cartas
+    function revelarCartasTemporales() {
+        const cartas = document.querySelectorAll(".card:not(.acertada)");
+        cartas.forEach(carta => carta.classList.add("volteada"));
+        botonPowerup.disabled = true;
+        setTimeout(() => {
+            cartas.forEach(carta => carta.classList.remove("volteada"));
+        }, 2000);
+    }
+
+    // Función de prueba para el efecto joker (CAMBIAR POR LA BUENA)
+    function activarJoker() {
+        console.log("Joker activado");
+    }
+
+    // Efecto de oscuridad: activa modo linterna que sigue al ratón (VER POR QUÉ NO SE QUITA CUANDO SE CAMBIA DE NIVEL)
+    function activarOscuridad() {
+        // Añadimos una clase css al <body>
+        document.body.classList.add("luz-apagada");
+
+        // Escuchamos el evento "mousemove", que se activa cada vez que el usuario mueve el ratón.
+        // Usamos una función flecha: (e) => { ... }
+        document.addEventListener("mousemove", (e) => { // e representa el objeto del evento (con información como posición del ratón).
+            // Cogemos la posición horizontal del ratón y le añadimos 'px' para usarlo en el css.
+            const x = e.clientX + "px";
+            // Cogemos la posición vertical del ratón en píxeles.
+            const y = e.clientY + "px";
+
+            // Actualizamos dos variables css (--x y --y) en el body.
+            document.body.style.setProperty("--x", x);
+            document.body.style.setProperty("--y", y);
+        });
+    }
 
 
-        // Limpiamos el tablero por si hay cartas anteriores
+    // Asignamos el evento al botón de power-up
+    botonPowerup.addEventListener("click", revelarCartasTemporales);
+
+    // ===============================
+    // FUNCIÓN PRINCIPAL DEL JUEGO
+    // ===============================
+
+    function iniciarJuego() {
+        // Obtenemos la configuración del nivel actual desde el objeto 'niveles'
+        config = niveles[nivelActual];
+
+        // Calculamos el número total de cartas según filas x columnas
+        const totalCartas = config.filas * config.columnas;
+
+        // Como el juego es por parejas, dividimos entre 2 para saber cuántas cartas únicas necesitamos
+        const cantidadParejas = totalCartas / 2;
+
+        // Ajustamos el diseño del tablero en base al número de columnas del nivel
+        tablero.style.gridTemplateColumns = `repeat(${config.columnas}, 1fr)`;
+
+        // Seleccionamos las cartas únicas según la categoría elegida (frutas, números, etc.) Solo tomamos las necesarias para el nivel actual
+        let cartasUnicas = categoriaActual.slice(0, cantidadParejas);
+
+        // Duplicamos el array de cartas para que haya 2 de cada una (crear las parejas)
+        const cartas = [...cartasUnicas, ...cartasUnicas];
+        barajarArray(cartas); // Mezclamos las cartas
+
+        // Limpiamos el tablero (por si había cartas anteriores)
         tablero.innerHTML = "";
 
-        // Creamos cada carta en el tablero
-        cartas.forEach(letra => {
-            // Creamos el div para cada carta
-            const carta = document.createElement("div");
-            carta.classList.add("card");
+        // === VARIABLES DE CONTROL PARA LA LÓGICA DEL JUEGO ===
+        let primeraCarta = null;    // Almacena la primera carta seleccionada en un turno
+        let segundaCarta = null;    // Almacena la segunda carta seleccionada
+        let bloqueado = false;      // Evita que el jugador haga más clics mientras se comparan dos cartas
+        let intentos = 0;           // Contador de intentos
 
-            // Guardamos la letra como un dato oculto para usarla al hacer click
-            carta.dataset.letra = letra;
+        // Mostramos el contador de intentos inicial (0)
+        actualizarContador(intentos);
 
-            // Creamos el contenido de la carta con dos caras
-            carta.innerHTML = `
-                <div class="cara cara-trasera"></div>
-                <div class="cara cara-frontal">${letra}</div>
-            `;
+        // Si el nivel es contrarreloj, iniciamos el contrarreloj
+        // Si no, iniciamos un cronometro
+        if (config.contrarreloj) iniciarCronometroRegresivo();
+        else iniciarCronometroNormal();
 
-            // Añadimos un evento para cuando se haga click en la carta
+        // Si los powerups están habilitados en el nivel, activamos el botón correspondiente
+        if (config.powerups) activarPowerups();
+        else desactivarPowerups();
+
+        // Activamos el efecto del Joker si está habilitado para este nivel
+        if (config.joker) activarJoker();
+
+        // Activamos el efecto de oscuridad (linterna) si está habilitado para este nivel
+        if (config.oscuridad) activarOscuridad();
+
+        // Recorremos todas las cartas y generamos sus elementos HTML en el tablero
+        cartas.forEach(cartaData => {
+            const carta = crearCarta(cartaData);
+
+            // Asignamos un evento al hacer clic en la carta
+            // Equivale a: carta.addEventListener("click", function() { ... });
             carta.addEventListener("click", () => {
-                // Esto es una FUNCIÓN FLECHA, equivalente a: 
-                // carta.addEventListener("click", function() { ... });
 
-                // Si estamos esperando que termine una comparación, ignoramos los click
-                if (bloqueado) return;
+                // Si ya hay una comparación en curso o la carta ya está girada, ignoramos el clic
+                if (bloqueado || carta.classList.contains("volteada")) return;
 
-                // Si la carta ya esta girada, no hacemos caso a los click
-                if (carta.classList.contains("volteada")) return;
-
-                // Mostramos la letra y marcamos la carta como girada
+                // Giramos la carta añadiendo la clase css 'volteada'
                 carta.classList.add("volteada");
 
                 if (!primeraCarta) {
-                    // Si no hay una carta ya girada, esta seria la primera
+                    // Si no hay carta seleccionada aún, esta es la primera del turno
                     primeraCarta = carta;
                 } else {
-                    // Si ya hay una carta girada, asignamos la segunda
+                    // Si ya hay una carta girada, esta es la segunda
                     segundaCarta = carta;
-                    // Bloqueamos los click minetras comparamos
-                    bloqueado = true;
+                    bloqueado = true; // Bloqueamos temporalmente nuevos clics
+                    intentos++;       // Aumentamos el número de intentos
+                    actualizarContador(intentos);
 
-                    // Aumentamos los intentos cada vez que se gira la segunda carta
-                    intentos++;
-                    spanContador.textContent = intentos; // Actualizamos el contador con el nuevo número
-
-                    // Añadimos temporizador para que el jugadora vea las cartas durante 1 segundo o 1000 ms
+                    // Esperamos 1 segundo antes de comparar las cartas
                     setTimeout(() => {
-                        if (primeraCarta.dataset.letra === segundaCarta.dataset.letra) {
-                            // Si el jugador acierta 2 cartas iguales, las dejamos giradas "visibles"
+
+                        // Comparamos si ambas cartas tienen el mismo valor
+                        if (primeraCarta.dataset.clave === segundaCarta.dataset.clave) {
+                            // Si coinciden, las marcamos como acertadas (se quedarán volteadas)
                             primeraCarta.classList.add("acertada");
                             segundaCarta.classList.add("acertada");
 
-                            // Comprobamos si ya no quedan cartas con la clase ".acertada"
+                            // Comprobamos si ya no quedan más cartas por acertar
                             const cartasRestantes = document.querySelectorAll(".card:not(.acertada)");
-                            // Si no hay cartas restantes, mostramos una alerta
                             if (cartasRestantes.length === 0) {
-                                // Paramos el cronómetro al ganar
+                                // Si todas han sido acertadas, detenemos el cronómetro y mostramos mensaje final
                                 clearInterval(intervaloTiempo);
-
-                                setTimeout(() => {
-                                    // MODIFICAR ALERTA PARA EL FUTURO
-                                    alert(`Enhorabuena pichita, lo has conseguido en ${intentos} intentos.`);
-                                }, 300); // Esperamos un poco para que se vea el último giro
+                                mostrarMensajeFinal(intentos);
                             }
 
                         } else {
-                            // Por consiguiente, si no son iguales pues las giramos otra vez
+                            // Si no coinciden, las giramos de nuevo (las ocultamos)
                             primeraCarta.classList.remove("volteada");
                             segundaCarta.classList.remove("volteada");
                         }
-                        // Reseteamos variables para el siguiente turno
+
+                        // Reiniciamos las variables para el siguiente turno
                         primeraCarta = null;
                         segundaCarta = null;
                         bloqueado = false;
-                    }, 1000);
+
+                    }, 1000); // Esperamos 1 segundo antes de mostrar el resultado al jugador
                 }
             });
 
-            // Añadimos la carta al tablero
+            // Añadimos la carta al tablero en el DOM
             tablero.appendChild(carta);
         });
     }
 
-    // Ejecutamos la función al iniciar el juego
-    iniciarJuego();
 
-    // Evento para reiniciar el juego al hacer click en el botón
-    botonReiniciar.addEventListener("click", () => {
+    // Evento que reinicia el juego al pulsar el botón
+    botonReiniciar.addEventListener("click", iniciarJuego);
+
+    // Evento que inicia el juego al seleccionar nivel y categoría y pulsar "Jugar"
+    botonJugar.addEventListener("click", () => {
+        const categoriaSeleccionada = selectorCategoria.value;
+        categoriaActual = categorias[categoriaSeleccionada];
+        nivelActual = parseInt(selectorNivel.value);
         iniciarJuego();
     });
+
+    // Inicia el juego automáticamente al cargar la página
+    iniciarJuego();
 });
-
-
-// Función que baraja un array usando el algoritmo Fisher-Yates
-function barajarArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));  // Índice aleatorio entre 0 e i
-        [array[i], array[j]] = [array[j], array[i]];    // Intercambiamos los elementos
-    }
-}

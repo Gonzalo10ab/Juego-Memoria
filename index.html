@@ -14,11 +14,35 @@
         <span>Intentos: <span id="contador">0</span></span>
         <span>Tiempo: <span id="tiempo">00:00</span></span>
         <button id="reiniciar-btn">Reiniciar</button>
+        <button id="powerup-revelar">Mostrar todo</button>
+        
     </div>
-
+    <div id="menu">
+        <label for="selector-categoria">Categoría:</label>
+        <select id="selector-categoria">
+            <option value="frutas">Frutas</option>
+            <option value="numeros">Números</option>
+        </select>
+    
+        <label for="selector-nivel">Nivel:</label>
+        <select id="selector-nivel">
+            <option value="1" selected>Nivel 1 (3x3)</option>
+            <option value="2">Nivel 2 (4x4)</option>
+            <option value="3">Nivel 3 (5x5)</option>
+            <option value="4">Nivel 4 (5x5)</option>
+            <option value="5">Nivel 5 (5x5)</option>
+            <option value="6">Nivel 6 (6x6)</option>
+        </select>
+    
+        <button id="boton-jugar">Jugar</button>
+    </div>
+    
     <main id="game-board"></main>
 
+    <script src="js/categorias.js"></script>
+    <script src="js/niveles.js"></script>
     <script src="js/main.js"></script>
+    
 </body>
 
 </html>
