@@ -30,7 +30,7 @@ const niveles = {
         powerups: false,
         joker: true,
         oscuridad: false,
-        contrarreloj: false
+        contrarreloj: true
     },
     5: {
         filas: 4,

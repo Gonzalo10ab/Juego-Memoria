@@ -13,6 +13,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectorNivel = document.getElementById("selector-nivel");
     const botonJugar = document.getElementById("boton-jugar");
 
+    // Instanciamos los sonidos
+    const sonidoAcierto = new Audio("assets/sonidos/correct.mp3");
+    const sonidoFallo = new Audio("assets/sonidos/error.mp3");
+    const sonidoTicTac = new Audio("assets/sonidos/tic-tac.mp3");
+    const sonidoClockAlarm = new Audio("assets/sonidos/clock-alarm.mp3")
+
+    // Ajustamos el volumen de los sonidos 
+    sonidoAcierto.volume = 0.5;
+    sonidoFallo.volume = 0.15;
+    sonidoTicTac.volume = 0.5;
+    sonidoClockAlarm.volume = 0.5;
+    
+
     // === VARIABLES GLOBALES ===
     let categoriaActual = categorias.frutas; // Categoría por defecto
     let nivelActual = 1; // Nivel por defecto
@@ -71,20 +84,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Inicia el cronómetro para abajo (modo contrarreloj)
     function iniciarCronometroRegresivo() {
-        tiempo = 40; // Tiempo total en segundos
+        tiempo = 20; // Tiempo total en segundos
         clearInterval(intervaloTiempo); // Aseguramos que no haya un intervalo anterior activo
         actualizarPantallaTiempo();
+    
         intervaloTiempo = setInterval(() => {
             tiempo--;
+    
+            // Cuando queden 10 segundos empieza el sonido
+            if (tiempo === 10) {
+                sonidoTicTac.play();
+            }
+    
+            // Cuando el tiempo se acaba
             if (tiempo < 0) {
-                clearInterval(intervaloTiempo);
-                alert("¡Tiempo agotado!");  // CAMBIAR POR UNA ALERTA CHULA
-                iniciarJuego(); // Reiniciamos el juego automáticamente
+                clearInterval(intervaloTiempo); // Detenemos el cronómetro
+    
+                sonidoTicTac.pause();           // Paramos el sonido
+                sonidoTicTac.currentTime = 0;   // Lo reiniciamos por si se vuelve a usar
+    
+                sonidoClockAlarm.play();        // Empieza el sonido de alarma
+    
+                // Esperamos 300ms antes de mostrar la alerta (NECESARIO SI QUEREMOS QUE EL SONIDO FUNCIONE)
+                setTimeout(() => {
+                    alert("¡Tiempo agotado!");  // CAMBIAR POR UNA ALERTA CHULA
+                    iniciarJuego();             // Reiniciamos el juego automáticamente
+                }, 300);
+    
                 return;
             }
+    
             actualizarPantallaTiempo();
-        }, 1000); // Cada segundo se actualiza
+        }, 1000); // Se ejecuta cada segundo
     }
+    
 
     // Inicia el cronómetro ascendente (modo sin tiempo límite)
     function iniciarCronometroNormal() {
@@ -96,6 +129,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1000);
     }
 
+    function detenerTodosLosSonidos() {
+        // Detenemos y reiniciamos el sonido del tic-tac (urgencia)
+        sonidoTicTac.pause();
+        sonidoTicTac.currentTime = 0;
+    
+        // Detenemos y reiniciamos la alarma final
+        sonidoClockAlarm.pause();
+        sonidoClockAlarm.currentTime = 0;
+
+        sonidoAcierto.pause();
+        sonidoAcierto.currentTime = 0;
+
+        sonidoFallo.pause();
+        sonidoFallo.currentTime = 0;
+        
+    }
+    
     // Activa el botón de power-up
     function activarPowerups() {
         botonPowerup.style.display = "inline-block";
@@ -151,6 +201,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===============================
 
     function iniciarJuego() {
+        // Detenemos todos los sonidos por si hay alguno activo
+        detenerTodosLosSonidos();
+
         // Obtenemos la configuración del nivel actual desde el objeto 'niveles'
         config = niveles[nivelActual];
 
@@ -229,6 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             // Si coinciden, las marcamos como acertadas (se quedarán volteadas)
                             primeraCarta.classList.add("acertada");
                             segundaCarta.classList.add("acertada");
+                            sonidoAcierto.play();
 
                             // Comprobamos si ya no quedan más cartas por acertar
                             const cartasRestantes = document.querySelectorAll(".card:not(.acertada)");
@@ -242,6 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             // Si no coinciden, las giramos de nuevo (las ocultamos)
                             primeraCarta.classList.remove("volteada");
                             segundaCarta.classList.remove("volteada");
+                            sonidoFallo.play();
                         }
 
                         // Reiniciamos las variables para el siguiente turno
