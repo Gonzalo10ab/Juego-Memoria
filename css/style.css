@@ -8,35 +8,55 @@ body {
     padding: 40px 20px;
     color: white;
 }
-
-.card {
-    width: 225px;
-    height: 100px;
+.caja{
+    width: 570px;
+    height: 910px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 5%;
     backdrop-filter: blur(6px);
-    display: flex;
+    display: grid;
     align-items: center;
     font-size: 32px;
     font-weight: bold;
     padding: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    padding-left: 50px;
-    margin-left: -1000px;
+    padding-left: 20px;
+
+}
+
+.card {
+    width: 350px;
+    height: 100px;
+    background: rgba(247, 247, 247, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5%;
+    backdrop-filter: blur(6px);
+    display: flex;
+    text-align:center;
+    align-items: center;
+    font-size: 32px;
+    font-weight: bold;
+    padding: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding-left: 200px;
+
 }
 
 
 .enlace {
-    color: white;
+    color: rgb(32, 32, 32);
     text-decoration: none;
+    padding-left: 15px;
 
 }
+
 .tutorial{
     color: white;
     text-decoration: none;
     padding-left:60px;
 }
+
 header{
     background-color: #1f1c2c;
     backdrop-filter: blur(6px);
@@ -46,8 +66,7 @@ header{
     display: flex;
     align-items: center;
     padding: 20px 40px;
-    font-size: 32px;
-    align-items: center;       
+    font-size: 32px;     
     justify-content: center;
     font-weight: bold;
     border-radius: 16px;
@@ -56,6 +75,25 @@ header{
     margin: 0 auto; 
 
 }
+header h1{
+    position: fixed;
+}
+img{
+    width:100px;
+    height:100px;
+}
+.interrogante{
+    position: relative;
+    left: 950px;
+    display: flex;
+    border-radius:20%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2); 
+    align-items: center;
+
+}
+
+
 .boton {
     padding: 10px 20px;
     margin-bottom: 20px;
@@ -72,9 +110,10 @@ header{
     background-color: #388E3C;
     transform: scale(1.05);
 }
+
 .estilo-claro header {
     background-color: rgba(255, 255, 255, 0.3);
-    color: #000;
+    color: #e6e6e6;
 }
 
 .estilo-claro .card {
@@ -83,8 +122,30 @@ header{
     color: #000;
 }
 
-.estilo-claro body {
-    color: #000;
+body.estilo-claro {
+    background: linear-gradient(135deg, #3ba3d4, #7bbbc4);
 }
 
+.estilo-claro .enlace{
+    color: rgb(214, 214, 214);
+    text-decoration: none;
+    padding-left: 15px;
+}
+.estilo-claro .card {
+    width: 350px;
+    height: 100px;
+    background: rgba(253, 255, 255, 0.007);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5%;
+    backdrop-filter: blur(6px);
+    display: flex;
+    text-align:center;
+    align-items: center;
+    font-size: 32px;
+    font-weight: bold;
+    padding: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding-left: 200px;
+
+}
 
