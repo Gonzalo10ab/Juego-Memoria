@@ -111,41 +111,4 @@ img{
     transform: scale(1.05);
 }
 
-.estilo-claro header {
-    background-color: rgba(255, 255, 255, 0.3);
-    color: #e6e6e6;
-}
-
-.estilo-claro .card {
-    background: rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    color: #000;
-}
-
-body.estilo-claro {
-    background: linear-gradient(135deg, #3ba3d4, #7bbbc4);
-}
-
-.estilo-claro .enlace{
-    color: rgb(214, 214, 214);
-    text-decoration: none;
-    padding-left: 15px;
-}
-.estilo-claro .card {
-    width: 350px;
-    height: 100px;
-    background: rgba(253, 255, 255, 0.007);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 5%;
-    backdrop-filter: blur(6px);
-    display: flex;
-    text-align:center;
-    align-items: center;
-    font-size: 32px;
-    font-weight: bold;
-    padding: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    padding-left: 200px;
-
-}
 
