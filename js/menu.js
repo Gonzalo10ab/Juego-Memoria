@@ -1,12 +1,4 @@
-// script.js
 
-document.addEventListener("DOMContentLoaded", () => {
-    const boton = document.getElementById("modoCambio");
-
-    boton.addEventListener("click", () => {
-        document.body.classList.toggle("estilo-claro");
-    });
-});
 const selectorCategoria = document.getElementById("selector-categoria");
 
 // Cargar categoría guardada al abrir el menú
