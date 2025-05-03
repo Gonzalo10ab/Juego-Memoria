@@ -62,8 +62,8 @@ button:disabled {
 /* CARTAS */
 /* Contenedor de la carta */
 .card {
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 200px;
     perspective: 1000px; /* Profundidad para efecto 3D */
 }
 

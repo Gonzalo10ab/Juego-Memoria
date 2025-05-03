@@ -29,5 +29,26 @@ const categorias = {
         { clave: "16", src: "assets/cartas/numeros/16.png" },
         { clave: "17", src: "assets/cartas/numeros/17.png" },
         { clave: "18", src: "assets/cartas/numeros/18.png" }
+    ],
+    davante: [
+        { clave: "1", src: "assets/cartas/davante/Davante_fundacion_horiz_navy.png" },
+        { clave: "2", src: "assets/cartas/davante/Davante_logo_claim_navy.png" },
+        { clave: "3", src: "assets/cartas/davante/Davante_logo_claim_white.png" },
+        { clave: "4", src: "assets/cartas/davante/Davante_logo_fundacion_horiz_white.png" },
+        { clave: "5", src: "assets/cartas/davante/Davante_logo_fundacion_vert_navy.png" },
+        { clave: "6", src: "assets/cartas/davante/Davante_logo_fundacion_vert_white.png" },
+        { clave: "7", src: "assets/cartas/davante/Davante_logo_tagline_navy.png" },
+        { clave: "8", src: "assets/cartas/davante/Davante_logo_tagline_white.png" },
+        { clave: "9", src: "assets/cartas/davante/Davante_logotipo_black.png" },
+        { clave: "10", src: "assets/cartas/davante/Davante_logotipo_navy.png" },
+        { clave: "11", src: "assets/cartas/davante/Davante_logotipo_white.png" },
+        { clave: "12", src: "assets/cartas/davante/Davante_simbolo_navy.png" },
+        { clave: "13", src: "assets/cartas/davante/Davante_simbolo_orange.png" },
+        { clave: "14", src: "assets/cartas/davante/Davante_simbolo_white.png" },
+        { clave: "15", src: "assets/cartas/davante/medac.png" },
+        { clave: "16", src: "assets/cartas/davante/medac_fondo_blanco.png" },
+        { clave: "17", src: "assets/cartas/davante/MEDAC_imagotipo_horiz_tagline_azul_PNG" },
+        { clave: "18", src: "assets/cartas/davante/MEDAC_logo.png" }
     ]
+    
 };
