@@ -10,7 +10,7 @@
 <header>
     <h1>Menu</h1> 
 
-    <div class="interrogante">
+    <div class="categoria">
         <label for="selector-categoria">Categoría:</label>
         <select id="selector-categoria">
             <option value="frutas">Frutas</option>
@@ -22,36 +22,38 @@
 <body>
         <br>
         <div class="caja">
+            <button class="card" onclick="cargarNivel(1)">Tutorial</button>
 
-            <div class="card"><a class="enlace" href="/contenido/tutorial.html">Tutorial</a>
-            </div>
+        <br>
+
+            <button class="card" onclick="cargarNivel(2)">Nivel 1</button>
         
+        <br>
+
+            <button class="card" onclick="cargarNivel(3)">Nivel 2</button>
 
         <br>
 
-            <div class="card"><a class="enlace" href="./contenido/nivel1.html">Nivel 1</a>
-            </div>
-        
-
-        <br>
-
-            <div class="card"><a class="enlace" href="./contenido/nivel2.html">Nivel 2</a>
-            </div>
-
-        <br>
-
-            <div class="card"><a class="enlace" href="./nivel3">Nivel 3</a>
-            </div>
+            <button class="card" onclick="cargarNivel(4)">Nivel 3</button>
 
 
         <br>
 
-            <div class="card"><a class="enlace" href="./nivel4">Nivel 4</a>
-            </div>
+            <button class="card" onclick="cargarNivel(5)">Nivel 4</button>
+
         <br>
 
-        <button class="boton" id="modoCambio">Cambiar Estilo</button>
+            <button class="card" onclick="cargarNivel(6)">Nivel 5</button>
+
+        <br>
         </div>
+
+        <script>
+            function cargarNivel(numero) {
+                localStorage.setItem("nivelElegido", numero); // guardamos el nivel elegido
+                window.location.href = "./contenido/juego.html"; // llevamos al archivo único del nivel
+            }
+        </script>
 </body>
 <footer>
 </footer>

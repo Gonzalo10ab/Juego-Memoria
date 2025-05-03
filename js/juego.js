@@ -29,19 +29,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === VARIABLES GLOBALES ===
     let categoriaActual = categorias.frutas; // Categoría por defecto
-    let nivelActual = 3; // Nivel por defecto
+    let nivelActual =  parseInt(localStorage.getItem("nivelElegido")) || 1; // Nivel por defecto
     let config = niveles[nivelActual]; // Configuración inicial del nivel
 
     let tiempo = 0; // Tiempo transcurrido o restante
     let intervaloTiempo; // Referencia al intervalo del cronómetro
 
 
-   
-   
+    //  ===MENSAJES PARA EL TUTORIAL EN ORDEN
+    const tutorialMensajes = [
+        "¡Bienvenido al juego de memoria!, Haz clic en una carta para girarla",
+        "Ahora, encuentra otra carta que sea igual.",
+        "Si las cartas no coinciden, se girarán de nuevo.",
+        "Si coinciden, se quedarán boca arriba.",
+        "Completa todas las parejas para ganar.",
+        "¡Bien hecho!"
+    ];
+    let tutorialPaso = 0;       // Empezamos en el primer mensaje
+
 
     //reinciar la pagina cuando se cambia de tematica
    
     const categoriaGuardada = localStorage.getItem("categoriaElegida");
+     // Recuperar categoría guardada desde el menú
+    if (categoriaGuardada) {
+        categoriaActual = categorias[categoriaGuardada];
+    } else {
+        categoriaActual = categorias.frutas; // por defecto
+    }
 
     if (categoriaGuardada) {
         selectorCategoria.value = categoriaGuardada; 
@@ -55,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // === FUNCIONES AUXILIARES ===
+    
 
     // Muestra el número de intentos en pantalla
     function actualizarContador(valor) {
@@ -216,7 +232,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // Asignamos el evento al botón de power-up
     botonPowerup.addEventListener("click", revelarCartasTemporales);
 
-   
+    //FUNCIÓN DEL TUTORIAL
+    function mostrarTutorial() {
+        const tutorialDiv = document.getElementById("tutorial-mensaje");
+        if (tutorialPaso < tutorialMensajes.length) {
+            tutorialDiv.textContent = tutorialMensajes[tutorialPaso];
+        } else {
+            tutorialDiv.style.display = "none"; // Cuando termine el tutorial
+        }
+    }
+
+    function siguienteTutorial() {
+        tutorialPaso++;
+        mostrarTutorial();
+    }
+
 
 
     // ===============================
@@ -291,7 +321,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!primeraCarta) {
                     // Si no hay carta seleccionada aún, esta es la primera del turno
-                    
+                    if (tutorialPaso === 0) { 
+                        siguienteTutorial(); // Avanzar tutorial SOLO cuando aciertes
+                    }
                     primeraCarta = carta;
                 } else {
                     // Si ya hay una carta girada, esta es la segunda
@@ -309,7 +341,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             primeraCarta.classList.add("acertada");
                             segundaCarta.classList.add("acertada");
                             sonidoAcierto.play();
-                           
+                            if (tutorialPaso < 5) { 
+                                siguienteTutorial(); // Avanzar tutorial cuanndo aciertes
+                            }
 
                             // Comprobamos si ya no quedan más cartas por acertar
                             const cartasRestantes = document.querySelectorAll(".card:not(.acertada)");
@@ -324,6 +358,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             primeraCarta.classList.remove("volteada");
                             segundaCarta.classList.remove("volteada");
                             sonidoFallo.play();
+                            if (tutorialPaso === 1||tutorialPaso=== 2 ) { 
+                                siguienteTutorial(); // Avanzar tutorial cuando no aciertes
+                            }
                         }
 
                         // Reiniciamos las variables para el siguiente turno
@@ -342,6 +379,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Evento que reinicia el juego al pulsar el botón
     botonReiniciar.addEventListener("click", () => {
+        //ponemos que la posicion de tutorial paso sea 0 para empezarla de 0 y luego la mostramos
+        tutorialPaso=0;
+        mostrarTutorial();
         iniciarJuego();
     });
     
