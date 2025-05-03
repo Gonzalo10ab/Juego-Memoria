@@ -51,6 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
     //reinciar la pagina cuando se cambia de tematica
    
     const categoriaGuardada = localStorage.getItem("categoriaElegida");
+     // Recuperar categoría guardada desde el menú
+    if (categoriaGuardada) {
+        categoriaActual = categorias[categoriaGuardada];
+    } else {
+        categoriaActual = categorias.frutas; // por defecto
+    }
 
     if (categoriaGuardada) {
         selectorCategoria.value = categoriaGuardada; 
@@ -64,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // === FUNCIONES AUXILIARES ===
+    
 
     // Muestra el número de intentos en pantalla
     function actualizarContador(valor) {

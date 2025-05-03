@@ -84,7 +84,7 @@ img{
 }
 .interrogante{
     position: relative;
-    left: 950px;
+    left: 850px;
     display: flex;
     border-radius:20%;
     background: rgba(255, 255, 255, 0.1);
