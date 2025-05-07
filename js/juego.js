@@ -2,39 +2,34 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     // Obtenemos los elementos HTML
-    const tablero = document.getElementById("game-board"); // Donde se colocan las cartas
-    const spanContador = document.getElementById("contador"); // Contador de intentos
-    const botonReiniciar = document.getElementById("reiniciar-btn"); // Botón para reiniciar
-    const spanTiempo = document.getElementById("tiempo"); // Muestra el cronómetro
-    const botonPowerup = document.getElementById("powerup-revelar"); // Botón para usar el powerup
+    const tablero = document.getElementById("game-board");
+    const spanContador = document.getElementById("contador");
+    const botonReiniciar = document.getElementById("reiniciar-btn");
+    const spanTiempo = document.getElementById("tiempo");
+    const botonPowerup = document.getElementById("powerup-revelar");
 
-    // Selectores del menú
     const selectorCategoria = document.getElementById("selector-categoria");
     const selectorNivel = document.getElementById("selector-nivel");
     const botonJugar = document.getElementById("boton-jugar");
 
-    // Instanciamos los sonidos
     const sonidoAcierto = new Audio("assets/sonidos/correct.mp3");
     const sonidoFallo = new Audio("assets/sonidos/error.mp3");
     const sonidoTicTac = new Audio("assets/sonidos/tic-tac.mp3");
-    const sonidoClockAlarm = new Audio("assets/sonidos/clock-alarm.mp3")
+    const sonidoClockAlarm = new Audio("assets/sonidos/clock-alarm.mp3");
 
-    // Ajustamos el volumen de los sonidos 
     sonidoAcierto.volume = 0.5;
     sonidoFallo.volume = 0.15;
     sonidoTicTac.volume = 0.5;
     sonidoClockAlarm.volume = 0.5;
 
-    // === VARIABLES GLOBALES ===
-    let categoriaActual = categorias.frutas; // Categoría por defecto
-    let nivelActual = parseInt(localStorage.getItem("nivelElegido")) || 1; // Nivel por defecto
-    const esTutorial = nivelActual === 1; // Bandera para detectar si estamos en el nivel de tutorial
-    let config = niveles[nivelActual]; // Configuración inicial del nivel
+    let categoriaActual = categorias.frutas;
+    let nivelActual = parseInt(localStorage.getItem("nivelElegido")) || 1;
+    const esTutorial = nivelActual === 1;
+    let config = niveles[nivelActual];
 
-    let tiempo = 0; // Tiempo transcurrido o restante
-    let intervaloTiempo; // Referencia al intervalo del cronómetro
+    let tiempo = 0;
+    let intervaloTiempo;
 
-    // === TUTORIAL ===
     const tutorialMensajes = [
         "¡Bienvenido al juego de memoria!, Haz clic en una carta para girarla",
         "Ahora, encuentra otra carta que sea igual.",
@@ -59,46 +54,37 @@ document.addEventListener("DOMContentLoaded", () => {
         mostrarTutorial();
     }
 
-    // Reiniciar la página cuando se cambia de temática
     const categoriaGuardada = localStorage.getItem("categoriaElegida");
     if (categoriaGuardada) {
         categoriaActual = categorias[categoriaGuardada];
         selectorCategoria.value = categoriaGuardada;
     }
 
-    // Evento para cambiar categoría y recargar
     selectorCategoria.addEventListener("change", () => {
         localStorage.setItem("categoriaElegida", selectorCategoria.value);
         location.reload();
     });
 
-    // === FUNCIONES AUXILIARES ===
-
-    // Muestra el número de intentos en pantalla
     function actualizarContador(valor) {
         spanContador.textContent = valor;
     }
 
-    // Convierte un número de segundos a formato mm:ss
     function formatearTiempo(segundos) {
         const minutos = String(Math.floor(segundos / 60)).padStart(2, "0");
         const segs = String(segundos % 60).padStart(2, "0");
         return `${minutos}:${segs}`;
     }
 
-    // Actualiza el cronómetro en la pantalla con el formato correcto
     function actualizarPantallaTiempo() {
         spanTiempo.textContent = formatearTiempo(tiempo);
     }
 
-    // Muestra un mensaje final de victoria al completar el juego
     function mostrarMensajeFinal(intentos) {
         setTimeout(() => {
             alert(`Enhorabuena pichita, lo has conseguido en ${intentos} intentos.`);
         }, 300);
     }
 
-    // Crea dinámicamente una carta con su estructura HTML
     function crearCarta(cartaData) {
         const carta = document.createElement("div");
         carta.classList.add("card");
@@ -108,10 +94,14 @@ document.addEventListener("DOMContentLoaded", () => {
              <div class="cara cara-frontal">
                  <img src="${cartaData.src}" alt="${cartaData.clave}">
              </div>`;
+
+        if (cartaData.clave === "joker") {
+            carta.classList.add("joker");
+        }
+            
         return carta;
     }
 
-    // Función que baraja un array usando el algoritmo Fisher-Yates
     function barajarArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -119,7 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Inicia el cronómetro para abajo (modo contrarreloj)
     function iniciarCronometroRegresivo() {
         tiempo = 20;
         clearInterval(intervaloTiempo);
@@ -146,7 +135,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1000);
     }
 
-    // Inicia el cronómetro ascendente (modo sin tiempo límite)
     function iniciarCronometroNormal() {
         tiempo = 0;
         clearInterval(intervaloTiempo);
@@ -182,8 +170,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
     }
 
-    function activarJoker() {
-        console.log("Joker activado");
+    function castigoPorJoker(jokerCard) {
+        jokerCard.classList.add("acertada"); // se queda fija
+        const cartas = document.querySelectorAll(".card");
+        cartas.forEach(carta => {
+            if (!carta.classList.contains("acertada")) {
+                carta.classList.remove("volteada");
+            }
+        });
+        alert("¡Has encontrado al Joker! Todas las cartas se han girado.");
     }
 
     function activarOscuridad() {
@@ -198,10 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     botonPowerup.addEventListener("click", revelarCartasTemporales);
 
-    // ===============================
-    // FUNCIÓN PRINCIPAL DEL JUEGO
-    // ===============================
-
     function iniciarJuego() {
         detenerTodosLosSonidos();
         config = niveles[nivelActual];
@@ -209,7 +200,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const totalCartas = config.filas * config.columnas;
         const cantidadParejas = totalCartas / 2;
         tablero.style.gridTemplateColumns = `repeat(${config.columnas}, 1fr)`;
+
         let cartasUnicas = categoriaActual.slice(0, cantidadParejas);
+
+        if (!esTutorial) {
+            cartasUnicas.pop(); // quitamos una normal
+            cartasUnicas.push({ clave: "joker", src: "assets/cartas/especiales/joker.png" });
+        }
+
         const cartas = [...cartasUnicas, ...cartasUnicas];
         barajarArray(cartas);
         tablero.innerHTML = "";
@@ -226,9 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (config.powerups) activarPowerups();
         else desactivarPowerups();
 
-        if (config.joker) activarJoker();
         if (config.oscuridad) activarOscuridad();
-
         if (esTutorial) mostrarTutorial();
 
         cartas.forEach(cartaData => {
@@ -236,6 +232,11 @@ document.addEventListener("DOMContentLoaded", () => {
             carta.addEventListener("click", () => {
                 if (bloqueado || carta.classList.contains("volteada")) return;
                 carta.classList.add("volteada");
+
+                if (carta.dataset.clave === "joker") {
+                    castigoPorJoker(carta);
+                    return; // El Joker no forma pareja, no sigue la lógica normal
+                }
 
                 if (!primeraCarta) {
                     if (esTutorial && tutorialPaso === 0) siguienteTutorial();
@@ -252,12 +253,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             segundaCarta.classList.add("acertada");
                             sonidoAcierto.play();
                             if (esTutorial && tutorialPaso < 5) siguienteTutorial();
-
-                            const cartasRestantes = document.querySelectorAll(".card:not(.acertada)");
-                            if (cartasRestantes.length === 0) {
-                                clearInterval(intervaloTiempo);
-                                mostrarMensajeFinal(intentos);
-                            }
                         } else {
                             primeraCarta.classList.remove("volteada");
                             segundaCarta.classList.remove("volteada");
@@ -268,6 +263,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         primeraCarta = null;
                         segundaCarta = null;
                         bloqueado = false;
+
+                        const cartasRestantes = document.querySelectorAll(".card:not(.acertada):not([data-clave='joker'])");
+                        if (cartasRestantes.length === 0) {
+                            clearInterval(intervaloTiempo);
+                            mostrarMensajeFinal(intentos);
+                        }
                     }, 1000);
                 }
             });
@@ -275,21 +276,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Evento que reinicia el juego al pulsar el botón
     botonReiniciar.addEventListener("click", () => {
         if (esTutorial) tutorialPaso = 0;
         if (esTutorial) mostrarTutorial();
         iniciarJuego();
     });
 
-    // Evento que inicia el juego al seleccionar nivel y categoría y pulsar "Jugar"
     botonJugar.addEventListener("click", () => {
         const categoriaSeleccionada = selectorCategoria.value;
         categoriaActual = categorias[categoriaSeleccionada];
-        nivelActual = parseInt(selectorNivel.value);
+        nivelActual = parseInt(selectorNivel?.value || 1);
         iniciarJuego();
     });
 
-    // Inicia el juego automáticamente al cargar la página
     iniciarJuego();
 });

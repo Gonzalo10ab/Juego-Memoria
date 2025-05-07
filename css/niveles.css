@@ -3,23 +3,23 @@
 /* Estilos para el body */
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #1f1c2c, #928dab); /* Fondo degradado oscuro */
-    min-height: 100vh; /* Asegura que ocupa toda la altura de la pantalla */
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 40px 20px;
     color: white;
-    position: relative; /* Necesario para posicionar bien la linterna */
-    overflow: hidden; /* Evita que se salga el contenido */
+    position: relative;
+    overflow: hidden;
 }
 
 /* Panel donde se muestra el cronómetro, intentos, etc. */
 #info-panel {
     margin-bottom: 30px;
     font-size: 18px;
-    backdrop-filter: blur(5px); /* Difumina el fondo detrás del panel */
-    background-color: rgba(255, 255, 255, 0.05); /* Fondo casi transparente */
+    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.05);
     padding: 10px 20px;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -31,70 +31,65 @@ button {
     margin-left: 10px;
     padding: 8px 16px;
     font-size: 14px;
-    background: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+    background: rgba(255, 255, 255, 0.1);
     color: white;
     border: none;
     border-radius: 8px;
-    cursor: pointer; /* Cursor del dedo */
-    transition: background 0.3s ease; /* Transición al pasar el ratón */
-    backdrop-filter: blur(5px); /* Difuminado suave */
+    cursor: pointer;
+    transition: background 0.3s ease;
+    backdrop-filter: blur(5px);
 }
 
-/* Color de fondo al pasar el ratón por encima */
 button:hover {
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* Estilo de botones deshabilitados */
 button:disabled {
-    background: rgba(255, 255, 255, 0.05); /* Aún más transparente */
-    cursor: default; /* Quita el puntero */
-    opacity: 0.5; /* Como más apagado */
+    background: rgba(255, 255, 255, 0.05);
+    cursor: default;
+    opacity: 0.5;
 }
 
 /* TABLERO DE JUEGO */
 #game-board {
     display: grid;
-    grid-template-columns: repeat(1, 100px); /* 1 columnas de 100px (se ajusta dinámicamente con js) */
+    grid-template-columns: repeat(1, 100px);
     gap: 14px;
 }
 
 /* CARTAS */
-/* Contenedor de la carta */
 .card {
     width: 100px;
     height: 100px;
-    perspective: 1000px; /* Profundidad para efecto 3D */
+    perspective: 1000px;
+    position: relative;
 }
 
-/* Cara común (frontal y trasera) */
+/* Cara común */
 .card .cara {
     width: 100%;
     height: 100%;
-    position: absolute; /* Se superponen ambas caras */
-    backface-visibility: hidden; /* Oculta la cara posterior al rotar */
+    position: absolute;
+    backface-visibility: hidden;
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.6s; /* Suaviza el giro 3D */
+    transition: transform 0.6s;
 }
 
-/* Parte trasera de la carta (lo que se ve antes de girar) */
 .card .cara-trasera {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Parte frontal de la carta (con imagen, oculta al inicio) */
 .card .cara-frontal {
     background: rgba(33, 150, 243, 0.3);
     border: 1px solid rgba(33, 150, 243, 0.5);
-    transform: rotateY(180deg); /* Inicialmente girada, se muestra al girar */
+    transform: rotateY(180deg);
 }
 
-/* Cuando la carta se clicka, giramos ambas caras */
 .card.volteada .cara-trasera {
     transform: rotateY(180deg);
 }
@@ -102,57 +97,61 @@ button:disabled {
     transform: rotateY(0deg);
 }
 
-/* Imagen dentro de la carta */
 .card img {
     width: 80%;
     height: auto;
-    pointer-events: none; /* No permite que el ratón interactúe con la imagen */
+    pointer-events: none;
 }
 
-/* Carta que ha sido acertada */
+/* Carta acertada */
 .card.acertada .cara-frontal {
     background: rgba(76, 175, 80, 0.3);
     border: 1px solid rgba(76, 175, 80, 0.6);
     box-shadow: 0 0 12px rgba(76, 175, 80, 0.7);
 }
 
-/* MODO OSCURIDAD / LINTERNA */
+/* ESTILO ESPECIAL PARA CARTA JOKER */
+.card.joker .cara-frontal {
+    background: rgba(255, 0, 0, 0.3);
+    border: 2px solid rgba(255, 0, 0, 0.7);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.9);
+}
 
-/* Capa que cubre toda la pantalla excepto un círculo alrededor del ratón */
+/* MODO OSCURIDAD */
 .luz-apagada::after {
     content: "";
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw; /* Cubre todo el ancho de la ventana */
-    height: 100vh; /* Cubre todo el alto */
-    pointer-events: none; /* No bloquea clics del usuario */
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
     background: radial-gradient(
-      circle at var(--x, 50%) var(--y, 50%), /* Centro del gradiente sigue al ratón */
-      transparent 60px,                     /* Centro totalmente visible */
-      rgba(0, 0, 0, 0.98) 100px             /* Oscuridad CASI total fuera del foco */
+        circle at var(--x, 50%) var(--y, 50%),
+        transparent 60px,
+        rgba(0, 0, 0, 0.98) 100px
     );
-    z-index: 9999; /* Se coloca encima de todo */
+    z-index: 9999;
 }
+
+/* SELECTORES */
 select {
-    font-family: 'Poppins', sans-serif; /* Fuente bonita */
-    font-size: 1.1rem; /* Más grande */
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
     padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.1); /* Fondo suave */
-    color: #ffffff; /* Texto blanco */
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
     outline: none;
-    appearance: none; /* Quita la flecha fea en algunos navegadores */
+    appearance: none;
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
 }
-select option{
+select option {
     background-color: #403a58;
 }
-
 select:hover {
     background: rgba(255, 255, 255, 0.15);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
-

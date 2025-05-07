@@ -8,7 +8,8 @@ const categorias = {
         { clave: "naranja", src: "../assets/cartas/frutas/naranja.webp" },
         { clave: "sandia", src: "../assets/cartas/frutas/sandia.png" },
         { clave: "uva", src: "../assets/cartas/frutas/uva.webp" },
-        { clave: "kiwi", src: "../assets/cartas/frutas/kiwi.webp" }
+        { clave: "kiwi", src: "../assets/cartas/frutas/kiwi.webp" },
+        { clave: "joker", src: "../assets/cartas/numeros/18.png" } // Carta especial
     ],
     numeros: [
         { clave: "1", src: "../assets/cartas/numeros/1.png" },
@@ -28,6 +29,7 @@ const categorias = {
         { clave: "15", src: "../assets/cartas/numeros/15.png" },
         { clave: "16", src: "../assets/cartas/numeros/16.png" },
         { clave: "17", src: "../assets/cartas/numeros/17.png" },
-        { clave: "18", src: "../assets/cartas/numeros/18.png" }
+        { clave: "18", src: "../assets/cartas/numeros/18.png" },
+        { clave: "joker", src: "../assets/cartas/numeros/18.png" } // Carta especial
     ]
 };
