@@ -20,7 +20,7 @@ const niveles = {
         filas: 4,
         columnas: 6,
         powerups: true,
-        joker: false,
+        joker: true,
         oscuridad: false,
         contrarreloj: false
     },
@@ -28,7 +28,7 @@ const niveles = {
         filas: 4,
         columnas: 6,
         powerups: false,
-        joker: true,
+        joker: false,
         oscuridad: false,
         contrarreloj: true
     },

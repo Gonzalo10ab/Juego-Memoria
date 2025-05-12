@@ -1,7 +1,5 @@
-// Esperamos a que el documento esté completamente cargado antes de ejecutar el código
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Obtenemos los elementos HTML
     const tablero = document.getElementById("game-board");
     const spanContador = document.getElementById("contador");
     const botonReiniciar = document.getElementById("reiniciar-btn");
@@ -89,16 +87,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const carta = document.createElement("div");
         carta.classList.add("card");
         carta.dataset.clave = cartaData.clave;
-        carta.innerHTML =
-            `<div class="cara cara-trasera"></div>
-             <div class="cara cara-frontal">
-                 <img src="${cartaData.src}" alt="${cartaData.clave}">
-             </div>`;
+
+        carta.innerHTML = `
+            <div class="cara cara-trasera"></div>
+            <div class="cara cara-frontal">
+                <img src="${cartaData.src}" alt="${cartaData.clave}">
+            </div>
+        `;
 
         if (cartaData.clave === "joker") {
             carta.classList.add("joker");
         }
-            
+
         return carta;
     }
 
@@ -171,14 +171,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function castigoPorJoker(jokerCard) {
-        jokerCard.classList.add("acertada"); // se queda fija
+        jokerCard.classList.add("acertada");
+
         const cartas = document.querySelectorAll(".card");
         cartas.forEach(carta => {
-            if (!carta.classList.contains("acertada")) {
+            if (carta !== jokerCard) {
                 carta.classList.remove("volteada");
+                carta.classList.remove("acertada");
             }
         });
-        alert("¡Has encontrado al Joker! Todas las cartas se han girado.");
+
+        alert("¡Has encontrado al Joker! Todas las cartas se han reiniciado.");
     }
 
     function activarOscuridad() {
@@ -203,12 +206,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let cartasUnicas = categoriaActual.slice(0, cantidadParejas);
 
-        if (!esTutorial) {
-            cartasUnicas.pop(); // quitamos una normal
+        if (config.joker) {
+            cartasUnicas.pop();
             cartasUnicas.push({ clave: "joker", src: "assets/cartas/especiales/joker.png" });
         }
 
-        const cartas = [...cartasUnicas, ...cartasUnicas];
+        let cartas = [...cartasUnicas, ...cartasUnicas];
+
+        // Eliminar segunda carta Joker si existe
+        const jokerIndex = cartas.findIndex(c => c.clave === "joker");
+        if (jokerIndex !== -1) {
+            cartas.splice(jokerIndex, 1);
+        }
+
         barajarArray(cartas);
         tablero.innerHTML = "";
 
@@ -235,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (carta.dataset.clave === "joker") {
                     castigoPorJoker(carta);
-                    return; // El Joker no forma pareja, no sigue la lógica normal
+                    return;
                 }
 
                 if (!primeraCarta) {
