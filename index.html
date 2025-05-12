@@ -9,41 +9,63 @@
 </head>
 
 <body>
-    <!-- CAMBIAR POR EL MENU DESEADO -->
-    <div id="info-panel">
-        <span>Intentos: <span id="contador">0</span></span>
-        <span>Tiempo: <span id="tiempo">00:00</span></span>
-        <button id="reiniciar-btn">Reiniciar</button>
-        <button id="powerup-revelar">Mostrar todo</button>
-        
-    </div>
-    <div id="menu">
-        <label for="selector-categoria">Categoría:</label>
-        <select id="selector-categoria">
+
+    <!-- MENU 1 -->
+    <section id="menu1">
+        <h1>Juego de Memoria</h1>
+        <button id="btn-jugar">Jugar</button>
+        <button id="btn-creditos">Créditos</button>
+        <button id="btn-sonido">🔊</button>
+    </section>
+
+    <!-- MENU 2 -->
+    <section id="menu2" class="oculto">
+        <h2>Selecciona categoría y nivel</h2>
+
+        <label for="modo-select">Categoría:</label>
+        <select id="modo-select">
             <option value="frutas">Frutas</option>
             <option value="numeros">Números</option>
             <option value="davante">Davante</option>
         </select>
-    
-        <label for="selector-nivel">Nivel:</label>
-        <select id="selector-nivel">
-            <option value="1" selected>Nivel 1 (2x3)</option>
-            <option value="2">Nivel 2 (4x4)</option>
-            <option value="3">Nivel 3 (4x6)</option>
-            <option value="4">Nivel 4 (4x6)</option>
-            <option value="5">Nivel 5 (4x6)</option>
-            <option value="6">Nivel 6 (6x6)</option>
-        </select>
-    
-        <button id="boton-jugar">Jugar</button>
-    </div>
-    
-    <main id="game-board"></main>
 
+        <button class="nivel" data-nivel="1">Tutorial</button>
+        <button class="nivel" data-nivel="2">Nivel 1</button>
+        <button class="nivel" data-nivel="3">Nivel 2</button>
+        <button class="nivel" data-nivel="4">Nivel 3</button>
+        <button class="nivel" data-nivel="5">Nivel 4</button>
+        <button class="nivel" data-nivel="6">Nivel 5</button>
+
+        <button id="btn-cancelar">Volver</button>
+    </section>
+
+    <!-- JUEGO -->
+    <section id="juego" class="oculto">
+        <div id="info-panel">
+            <span>Intentos: <span id="contador">0</span></span> |
+            <span>Tiempo: <span id="tiempo">00:00</span></span>
+            <button id="reiniciar-btn">Reiniciar</button>
+            <button id="powerup-revelar" style="display:none;">Power-up</button>
+        </div>
+        <main id="game-board"></main>
+        <button id="btn-volver-menu">Volver al menú</button>
+    </section>
+
+    <!-- MODAL CRÉDITOS -->
+    <div id="modal-creditos" class="modal oculto">
+        <div class="modal-contenido">
+            <h3>Créditos</h3>
+            <p>Samuel Peña Aguayo</p>
+            <p>Gonzalo Martínez de la Torre</p>
+            <button id="cerrar-creditos">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="js/menus.js"></script>
     <script src="js/categorias.js"></script>
     <script src="js/niveles.js"></script>
     <script src="js/main.js"></script>
-    
 </body>
 
 </html>

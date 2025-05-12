@@ -7,31 +7,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const botonReiniciar = document.getElementById("reiniciar-btn"); // Botón para reiniciar
     const spanTiempo = document.getElementById("tiempo"); // Muestra el cronómetro
     const botonPowerup = document.getElementById("powerup-revelar"); // Botón para usar el powerup
-
-    // Selectores del menú
-    const selectorCategoria = document.getElementById("selector-categoria");
-    const selectorNivel = document.getElementById("selector-nivel");
-    const botonJugar = document.getElementById("boton-jugar");
+    const botonVolverMenu = document.getElementById("btn-volver-menu"); // Botón volver al menu
 
     // Instanciamos los sonidos
     const sonidoAcierto = new Audio("assets/sonidos/correct.mp3");
     const sonidoFallo = new Audio("assets/sonidos/error.mp3");
     const sonidoTicTac = new Audio("assets/sonidos/tic-tac.mp3");
-    const sonidoClockAlarm = new Audio("assets/sonidos/clock-alarm.mp3")
+    const sonidoClockAlarm = new Audio("assets/sonidos/clock-alarm.mp3");
 
     // Ajustamos el volumen de los sonidos 
     sonidoAcierto.volume = 0.5;
     sonidoFallo.volume = 0.15;
     sonidoTicTac.volume = 0.5;
     sonidoClockAlarm.volume = 0.5;
-    
 
     // === VARIABLES GLOBALES ===
-    let categoriaActual = categorias.frutas; // Categoría por defecto
-    let nivelActual = 1; // Nivel por defecto
-    let config = niveles[nivelActual]; // Configuración inicial del nivel
-
-    let tiempo = 0; // Tiempo transcurrido o restante
+    let categoriaActual;
+    let nivelActual;
+    let config;
+    let tiempo = 0;
     let intervaloTiempo; // Referencia al intervalo del cronómetro
 
     // === FUNCIONES AUXILIARES ===
@@ -196,6 +190,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // Asignamos el evento al botón de power-up
     botonPowerup.addEventListener("click", revelarCartasTemporales);
 
+    botonVolverMenu.addEventListener("click", () => {
+        // Ocultamos la sección de juego y volvemos al menú 1
+        document.getElementById("juego").classList.add("oculto");
+        document.getElementById("menu1").classList.remove("oculto");
+
+        // Limpiamos el tablero
+        document.getElementById("game-board").innerHTML = "";
+
+        // Detenemos sonidos y cronómetro
+        clearInterval(intervaloTiempo);
+        detenerTodosLosSonidos();
+    });
+
     // ===============================
     // FUNCIÓN PRINCIPAL DEL JUEGO
     // ===============================
@@ -203,6 +210,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function iniciarJuego() {
         // Detenemos todos los sonidos por si hay alguno activo
         detenerTodosLosSonidos();
+
+        // Obtenemos la categoría y el nivel actual desde variables globales (definidas en menus.js). Si no existen, usamos valores por defecto.
+        categoriaActual = window.categoriaActual || categorias.frutas;
+        nivelActual = window.nivelActual || 1;
 
         // Obtenemos la configuración del nivel actual desde el objeto 'niveles'
         config = niveles[nivelActual];
@@ -214,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const cantidadParejas = totalCartas / 2;
 
         // Ajustamos el diseño del tablero en base al número de columnas del nivel
-        tablero.style.gridTemplateColumns = `repeat(${config.columnas}, 1fr)`;
+        tablero.style.gridTemplateColumns = `repeat(${config.columnas}, minmax(0, 1fr))`;
 
         // Seleccionamos las cartas únicas según la categoría elegida (frutas, números, etc.) Solo tomamos las necesarias para el nivel actual
         let cartasUnicas = categoriaActual.slice(0, cantidadParejas);
@@ -282,7 +293,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             // Si coinciden, las marcamos como acertadas (se quedarán volteadas)
                             primeraCarta.classList.add("acertada");
                             segundaCarta.classList.add("acertada");
-                            sonidoAcierto.play();
+                            // Si el sonido está activado, reproducimos el efecto de acierto
+                            if (window.sonidoActivo) sonidoAcierto.play();
 
                             // Comprobamos si ya no quedan más cartas por acertar
                             const cartasRestantes = document.querySelectorAll(".card:not(.acertada)");
@@ -296,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             // Si no coinciden, las giramos de nuevo (las ocultamos)
                             primeraCarta.classList.remove("volteada");
                             segundaCarta.classList.remove("volteada");
-                            sonidoFallo.play();
+                            if (window.sonidoActivo) sonidoFallo.play();
                         }
 
                         // Reiniciamos las variables para el siguiente turno
@@ -317,14 +329,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Evento que reinicia el juego al pulsar el botón
     botonReiniciar.addEventListener("click", iniciarJuego);
 
-    // Evento que inicia el juego al seleccionar nivel y categoría y pulsar "Jugar"
-    botonJugar.addEventListener("click", () => {
-        const categoriaSeleccionada = selectorCategoria.value;
-        categoriaActual = categorias[categoriaSeleccionada];
-        nivelActual = parseInt(selectorNivel.value);
-        iniciarJuego();
-    });
-
-    // Inicia el juego automáticamente al cargar la página
-    iniciarJuego();
+    // Hacemos que la función iniciarJuego este disponible globalmente
+    window.iniciarJuego = iniciarJuego;
 });
