@@ -47,7 +47,7 @@ const categorias = {
         { clave: "14", src: "assets/cartas/davante/Davante_simbolo_white.png" },
         { clave: "15", src: "assets/cartas/davante/medac.png" },
         { clave: "16", src: "assets/cartas/davante/medac_fondo_blanco.png" },
-        { clave: "17", src: "assets/cartas/davante/MEDAC_imagotipo_horiz_tagline_azul_PNG" },
+        { clave: "17", src: "assets/cartas/davante/MEDAC_imagotipo_horiz_tagline_azul_PNG.png" },
         { clave: "18", src: "assets/cartas/davante/MEDAC_logo.png" }
     ]
     

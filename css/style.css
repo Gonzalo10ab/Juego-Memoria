@@ -1,38 +1,50 @@
+/* === VARIABLES DE COLOR (ESTILO MEDAC / DAVANTE) === */
+:root {
+    --medac-azul-principal: #003594;
+    --medac-azul-secundario: #003192;
+    --medac-acento: #3b63ab;
+    --medac-claro: #ffffff;
+    --medac-fondo-suave: rgba(255, 255, 255, 0.05);
+    --medac-transparente: rgba(255, 255, 255, 0.1);
+    --davante-naranja: #ff5b40;
+}
+
 /* ESTILOS GENERALES */
 
 /* Estilos para el body */
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #1f1c2c, #928dab); /* Fondo degradado oscuro */
-    min-height: 100vh; /* Asegura que ocupa toda la altura de la pantalla */
+    background: linear-gradient(135deg, var(--medac-azul-principal), var(--medac-acento));
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 40px 20px;
-    color: white;
-    position: relative; /* Necesario para posicionar bien la linterna */
-    overflow: hidden; /* Evita que se salga el contenido */
+    color: var(--medac-claro);
+    position: relative;
+    overflow: hidden;
 }
 
 /* Panel donde se muestra el cronómetro, intentos, etc. */
 #info-panel {
     margin-bottom: 30px;
     font-size: 18px;
-    backdrop-filter: blur(5px); /* Difumina el fondo detrás del panel */
-    background-color: rgba(255, 255, 255, 0.05); /* Fondo casi transparente */
+    backdrop-filter: blur(5px);
+    background-color: var(--medac-fondo-suave);
     padding: 10px 20px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--medac-transparente);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
+
 
 /* Estilo general de todos los botones */
 button {
     margin-left: 10px;
     padding: 8px 16px;
     font-size: 14px;
-    background: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
-    color: white;
+    background: var(--medac-transparente);
+    color: var(--medac-claro);
     border: none;
     border-radius: 8px;
     cursor: pointer; /* Cursor del dedo */
@@ -42,12 +54,14 @@ button {
 
 /* Color de fondo al pasar el ratón por encima */
 button:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--davante-naranja);
+    color: var(--medac-claro);
+    border-color: var(--medac-claro);
 }
 
 /* Estilo de botones deshabilitados */
 button:disabled {
-    background: rgba(255, 255, 255, 0.05); /* Aún más transparente */
+    background: var(--medac-fondo-suave);
     cursor: default; /* Quita el puntero */
     opacity: 0.5; /* Como más apagado */
 }
@@ -60,6 +74,7 @@ button:disabled {
 }
 
 /* CARTAS */
+
 /* Contenedor de la carta */
 .card {
     width: 200px;
@@ -82,8 +97,8 @@ button:disabled {
 
 /* Parte trasera de la carta (lo que se ve antes de girar) */
 .card .cara-trasera {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--medac-transparente);
+    border: 1px solid var(--medac-claro);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
@@ -111,9 +126,9 @@ button:disabled {
 
 /* Carta que ha sido acertada */
 .card.acertada .cara-frontal {
-    background: rgba(76, 175, 80, 0.3);
-    border: 1px solid rgba(76, 175, 80, 0.6);
-    box-shadow: 0 0 12px rgba(76, 175, 80, 0.7);
+    background: var(--davante-naranja);
+    border: 2px solid var(--medac-claro);
+    box-shadow: 0 0 20px var(--davante-naranja);
 }
 
 /* MODO OSCURIDAD / LINTERNA */
