@@ -191,6 +191,9 @@ document.addEventListener("DOMContentLoaded", () => {
     botonPowerup.addEventListener("click", revelarCartasTemporales);
 
     botonVolverMenu.addEventListener("click", () => {
+        // Eliminamos una clase css al <body>
+        document.body.classList.remove("luz-apagada");
+        
         // Ocultamos la sección de juego y volvemos al menú 1
         document.getElementById("juego").classList.add("oculto");
         document.getElementById("menu1").classList.remove("oculto");
@@ -212,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
         detenerTodosLosSonidos();
 
         // Obtenemos la categoría y el nivel actual desde variables globales (definidas en menus.js). Si no existen, usamos valores por defecto.
-        categoriaActual = window.categoriaActual || categorias.frutas;
+        categoriaActual = window.categoriaActual || categorias.numeros;
         nivelActual = window.nivelActual || 1;
 
         // Obtenemos la configuración del nivel actual desde el objeto 'niveles'
