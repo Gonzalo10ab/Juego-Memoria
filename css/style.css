@@ -136,9 +136,10 @@ button:disabled {
 
 /* Imagen dentro de la carta */
 .card img {
-    width: 80%;
-    height: auto;
-    pointer-events: none; /* No permite que el ratón interactúe con la imagen */
+    width: 100%;
+    max-height: 90%;
+    object-fit: contain;
+    pointer-events: none;
 }
 
 /* Carta que ha sido acertada */
@@ -248,4 +249,18 @@ select {
         transform: scale(1);
         opacity: 1;
     }
+}
+
+/* === Vibración joker === */
+@keyframes vibrar {
+    0% { transform: translate(0); }
+    20% { transform: translate(-0.5px, 0.5px); }
+    40% { transform: translate(0.5px, -0.5px); }
+    60% { transform: translate(-0.3px, 0.3px); }
+    80% { transform: translate(0.3px, -0.3px); }
+    100% { transform: translate(0); }
+}
+
+.card.vibrando {
+    animation: vibrar 0.3s ease-in-out;
 }

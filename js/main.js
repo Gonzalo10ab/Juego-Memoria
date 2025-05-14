@@ -55,11 +55,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 300);
     }
 
+    // Función que aplica el castigo del joker
+    function castigoPorJoker(jokerCard) {
+        jokerCard.classList.add("acertada");
+        document.querySelectorAll(".card").forEach(c => {
+            if (c !== jokerCard) {
+                c.classList.remove("volteada");
+                c.classList.remove("acertada");
+            }
+        });
+        alert("¡Has encontrado al Joker! Todas las cartas se han reiniciado.");
+    }
+
     // Crea dinámicamente una carta con su estructura HTML
     function crearCarta(cartaData) {
         const carta = document.createElement("div");
         carta.classList.add("card");
         carta.dataset.clave = cartaData.clave; // Se guarda la clave como atributo personalizado
+        if (cartaData.clave === "joker") carta.classList.add("joker");
         carta.innerHTML =
             `<div class="cara cara-trasera"></div>
             <div class="cara cara-frontal">
@@ -111,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
             actualizarPantallaTiempo();
         }, 1000); // Se ejecuta cada segundo
     }
-    
 
     // Inicia el cronómetro ascendente (modo sin tiempo límite)
     function iniciarCronometroNormal() {
@@ -137,9 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         sonidoFallo.pause();
         sonidoFallo.currentTime = 0;
-        
     }
-    
+
     // Activa el botón de power-up
     function activarPowerups() {
         botonPowerup.style.display = "inline-block";
@@ -186,6 +197,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Hace que las cartas joker vibren cada cierto tiempo aleatorio
+    function activarVibracionJokers() {
+        const jokers = document.querySelectorAll(".card.joker");
+
+        jokers.forEach(joker => {
+            const vibrar = () => {
+                joker.classList.add("vibrando");
+
+                setTimeout(() => {
+                    joker.classList.remove("vibrando");
+                }, 300); // Dura lo mismo que la animación en CSS
+
+                const siguiente = Math.floor(Math.random() * 5000) + 8000; // 8-12 segundos
+                setTimeout(vibrar, siguiente);
+            };
+
+            setTimeout(vibrar, Math.random() * 2000); // Pequeño retardo inicial aleatorio
+        });
+    }
+
 
     // Asignamos el evento al botón de power-up
     botonPowerup.addEventListener("click", revelarCartasTemporales);
@@ -193,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
     botonVolverMenu.addEventListener("click", () => {
         // Eliminamos una clase css al <body>
         document.body.classList.remove("luz-apagada");
-        
+
         // Ocultamos la sección de juego y volvemos al menú 1
         document.getElementById("juego").classList.add("oculto");
         document.getElementById("menu1").classList.remove("oculto");
@@ -233,8 +264,15 @@ document.addEventListener("DOMContentLoaded", () => {
         // Seleccionamos las cartas únicas según la categoría elegida (frutas, números, etc.) Solo tomamos las necesarias para el nivel actual
         let cartasUnicas = categoriaActual.slice(0, cantidadParejas);
 
+        // Si el nivel tiene joker, sustituimos una carta por el joker
+        if (config.joker) {
+            cartasUnicas.pop();
+            cartasUnicas.push({ clave: "joker", src: "assets/cartas/especiales/joker.png" });
+        }
+
         // Duplicamos el array de cartas para que haya 2 de cada una (crear las parejas)
         const cartas = [...cartasUnicas, ...cartasUnicas];
+
         barajarArray(cartas); // Mezclamos las cartas
 
         // Limpiamos el tablero (por si había cartas anteriores)
@@ -278,6 +316,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Giramos la carta añadiendo la clase css 'volteada'
                 carta.classList.add("volteada");
 
+                // Si es la carta joker, se activa el castigo y se corta el turno
+                if (carta.dataset.clave === "joker") {
+                    castigoPorJoker(carta);
+                    return;
+                }
+
                 if (!primeraCarta) {
                     // Si no hay carta seleccionada aún, esta es la primera del turno
                     primeraCarta = carta;
@@ -300,7 +344,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             if (window.sonidoActivo) sonidoAcierto.play();
 
                             // Comprobamos si ya no quedan más cartas por acertar
-                            const cartasRestantes = document.querySelectorAll(".card:not(.acertada)");
+                            const cartasRestantes = document.querySelectorAll(".card:not(.acertada):not([data-clave='joker'])");
                             if (cartasRestantes.length === 0) {
                                 // Si todas han sido acertadas, detenemos el cronómetro y mostramos mensaje final
                                 clearInterval(intervaloTiempo);
@@ -325,9 +369,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Añadimos la carta al tablero en el DOM
             tablero.appendChild(carta);
+            activarVibracionJokers();
         });
     }
-
 
     // Evento que reinicia el juego al pulsar el botón
     botonReiniciar.addEventListener("click", iniciarJuego);
