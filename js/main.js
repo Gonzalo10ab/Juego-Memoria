@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Inicia el cronómetro para abajo (modo contrarreloj)
     function iniciarCronometroRegresivo() {
-        tiempo = 20; // Tiempo total en segundos
+        tiempo = 1200; // Tiempo total en segundos
         clearInterval(intervaloTiempo); // Aseguramos que no haya un intervalo anterior activo
         actualizarPantallaTiempo();
     
@@ -187,11 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
     }
 
-    // Función de prueba para el efecto joker (CAMBIAR POR LA BUENA)
-    function activarJoker() {
-        console.log("Joker activado");
-    }
-
     // Efecto de oscuridad: activa modo linterna que sigue al ratón (VER POR QUÉ NO SE QUITA CUANDO SE CAMBIA DE NIVEL)
     function activarOscuridad() {
         // Añadimos una clase css al <body>
@@ -245,6 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Limpiamos el tablero
         document.getElementById("game-board").innerHTML = "";
+        document.getElementById("turno-jugador").classList.add("oculto");
 
         // Detenemos sonidos y cronómetro
         clearInterval(intervaloTiempo);
@@ -279,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let cartasUnicas = categoriaActual.slice(0, cantidadParejas);
 
         // Si el nivel tiene joker, sustituimos una carta por el joker
-        if (config.joker) {
+        if (config.joker && window.modoJuego !== 2) {
             cartasUnicas.pop();
             cartasUnicas.push({ clave: "joker", src: "assets/cartas/especiales/joker.png" });
         }
@@ -302,14 +298,14 @@ document.addEventListener("DOMContentLoaded", () => {
         let puntosJ2 = 0;
 
         const panelTurno = document.getElementById("turno-jugador");
-        const panelP2 = document.getElementById("p2-panel");
+        const marcadores = document.querySelectorAll(".marcador");
 
         if (window.modoJuego === 2) {
-            panelTurno.style.display = "block";
-            panelP2.style.display = "inline";
+            marcadores.forEach(el => el.style.display = "inline");
+            panelTurno.classList.remove("oculto");
         } else {
-            panelTurno.style.display = "none";
-            panelP2.style.display = "none";
+            marcadores.forEach(el => el.style.display = "none");
+            panelTurno.classList.add("oculto");
         }
         
         actualizarContador(intentos);
@@ -323,11 +319,11 @@ document.addEventListener("DOMContentLoaded", () => {
         else iniciarCronometroNormal();
 
         // Si los powerups están habilitados en el nivel, activamos el botón correspondiente
-        if (config.powerups) activarPowerups();
-        else desactivarPowerups();
-
-        // Activamos el efecto del Joker si está habilitado para este nivel
-        if (config.joker) activarJoker();
+        if (config.powerups && window.modoJuego !== 2) {
+            activarPowerups(); // lo muestra
+        } else {
+            desactivarPowerups(); // lo oculta
+        }
 
         // Activamos el efecto de oscuridad (linterna) si está habilitado para este nivel
         if (config.oscuridad) activarOscuridad();
@@ -384,7 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             if (cartasRestantes.length === 0) {
                                 // Si todas han sido acertadas, detenemos el cronómetro y mostramos mensaje final
                                 clearInterval(intervaloTiempo);
-                                mostrarMensajeFinal(intentos);
+                                mostrarMensajeFinal(intentos, puntosJ1, puntosJ2);
                             }
 
                         } else {

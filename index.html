@@ -48,14 +48,11 @@
     </section>
 
     <!-- JUEGO -->
+   <div id="turno-jugador" class="oculto">Turno de: Jugador <span id="jugador-actual">1</span></div>
     <section id="juego" class="oculto">
-        <div id="turno-jugador" style="margin-bottom: 20px; font-size: 24px; font-weight: bold;">
-            Turno de: Jugador <span id="jugador-actual">1</span>
-        </div>
-        
         <div id="info-panel">
-            <span>P1: <span id="puntos-j1">0</span></span>
-            <span id="p2-panel">P2: <span id="puntos-j2">0</span></span> |
+            <span class="marcador" id="marcador-j1">P1: <span id="puntos-j1">0</span></span>
+            <span class="marcador" id="marcador-j2">P2: <span id="puntos-j2">0</span></span>
             <span>Intentos: <span id="contador">0</span></span> |
             <span>Tiempo: <span id="tiempo">00:00</span></span>
             <button id="reiniciar-btn">Reiniciar</button>
