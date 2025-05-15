@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Inicia el cronómetro para abajo (modo contrarreloj)
     function iniciarCronometroRegresivo() {
-        tiempo = 20; // Tiempo total en segundos
+        tiempo = 1200; // Tiempo total en segundos
         clearInterval(intervaloTiempo); // Aseguramos que no haya un intervalo anterior activo
         actualizarPantallaTiempo();
     
@@ -369,9 +369,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (spanPuntosJ2) spanPuntosJ2.textContent = puntosJ2;
 
         // Si el nivel es contrarreloj, iniciamos el contrarreloj
-        // Si no, iniciamos un cronometro
-        if (config.contrarreloj) iniciarCronometroRegresivo();
-        else iniciarCronometroNormal();
+        // Si hay 2 jugadores, nunca usamos contrarreloj
+        if (window.modoJuego === 2) {
+            iniciarCronometroNormal();
+        } else {
+            if (config.contrarreloj) iniciarCronometroRegresivo();
+            else iniciarCronometroNormal();
+        }
 
         // Si los powerups están habilitados en el nivel, activamos el botón correspondiente
         if (config.powerups && window.modoJuego !== 2) {
