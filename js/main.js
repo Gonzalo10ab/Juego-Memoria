@@ -31,6 +31,38 @@ document.addEventListener("DOMContentLoaded", () => {
     let tiempo = 0;
     let intervaloTiempo; // Referencia al intervalo del cronómetro
 
+    // === SISTEMA DE TUTORIAL GUIADO ===
+
+    // Array de mensajes del tutorial
+    const tutorialMensajes = [
+        "¡Bienvenido al juego de memoria! Haz clic en una carta para girarla.",
+        "Ahora, encuentra otra carta que sea igual.",
+        "Si las cartas no coinciden, se girarán de nuevo.",
+        "Si coinciden, se quedarán boca arriba.",
+        "Completa todas las parejas para ganar.",
+        "¡Bien hecho!"
+    ];
+
+    let indiceMensajeTutorial = 0; // Índice del mensaje actual
+
+    // Muestra un mensaje del tutorial en pantalla
+    function mostrarMensajeTutorial(mensaje) {
+        const div = document.getElementById("tutorial-mensaje");
+        div.textContent = mensaje;
+        div.classList.remove("oculto");
+    }
+
+    // Avanza al siguiente mensaje
+    function siguienteMensajeTutorial() {
+        indiceMensajeTutorial++;
+        if (indiceMensajeTutorial < tutorialMensajes.length) {
+            mostrarMensajeTutorial(tutorialMensajes[indiceMensajeTutorial]);
+        } else {
+            document.getElementById("tutorial-mensaje").classList.add("oculto");
+        }
+    }
+
+
     // === FUNCIONES AUXILIARES ===
 
     // Muestra el número de intentos en pantalla
@@ -62,11 +94,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     mensaje = `¡Empate! Ambos tienen ${puntosJ1} puntos.`;
                 }
-                alert(mensaje);
+                mostrarMensajeBonito(mensaje);
             } else {
-                alert(`Enhorabuena pichita, lo has conseguido en ${intentos} intentos.`); // CAMBIAR POR UNA ALERTA CHULA
+                mostrarMensajeBonito(`Enhorabuena pichita, lo has conseguido en ${intentos} intentos.`);
             }
         }, 300);
+    }
+
+    function mostrarMensajeBonito(texto, duracion = 3000) {
+        const div = document.getElementById("mensaje-final");
+        div.textContent = texto;
+        div.classList.remove("oculto");
+        div.classList.add("visible");
+
+        setTimeout(() => {
+            div.classList.remove("visible");
+            setTimeout(() => {
+                div.classList.add("oculto");
+            }, 300); // esperamos a que desaparezca con animación
+        }, duracion);
     }
 
     // Función que aplica el castigo del joker
@@ -78,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 c.classList.remove("acertada");
             }
         });
-        alert("¡Has encontrado al Joker! Todas las cartas se han reiniciado.");
+    mostrarMensajeBonito("¡Has encontrado al Joker! Todas las cartas se han reiniciado.");
     }
 
     // Crea dinámicamente una carta con su estructura HTML
@@ -105,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Inicia el cronómetro para abajo (modo contrarreloj)
     function iniciarCronometroRegresivo() {
-        tiempo = 1200; // Tiempo total en segundos
+        tiempo = 20; // Tiempo total en segundos
         clearInterval(intervaloTiempo); // Aseguramos que no haya un intervalo anterior activo
         actualizarPantallaTiempo();
     
@@ -128,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
                 // Esperamos 300ms antes de mostrar la alerta (NECESARIO SI QUEREMOS QUE EL SONIDO FUNCIONE)
                 setTimeout(() => {
-                    alert("¡Tiempo agotado!");  // CAMBIAR POR UNA ALERTA CHULA
+                    mostrarMensajeBonito("¡Tiempo agotado!"); // CAMBIAR POR UNA ALERTA CHULA
                     iniciarJuego();             // Reiniciamos el juego automáticamente
                 }, 300);
     
@@ -233,6 +279,9 @@ document.addEventListener("DOMContentLoaded", () => {
     botonVolverMenu.addEventListener("click", () => {
         // Eliminamos una clase css al <body>
         document.body.classList.remove("luz-apagada");
+        // Ocultamos el mensaje del tutorial (por si está activo)
+        document.getElementById("tutorial-mensaje").classList.add("oculto");
+        indiceMensajeTutorial = 0;
 
         // Ocultamos la sección de juego y volvemos al menú 1
         document.getElementById("juego").classList.add("oculto");
@@ -258,6 +307,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // Obtenemos la categoría y el nivel actual desde variables globales (definidas en menus.js). Si no existen, usamos valores por defecto.
         categoriaActual = window.categoriaActual || categorias.numeros;
         nivelActual = window.nivelActual || 1;
+
+        // Si el nivel es el tutorial (por ejemplo, nivel 99), iniciamos los mensajes
+        if (nivelActual === 1) {
+            indiceMensajeTutorial = 0;
+            mostrarMensajeTutorial(tutorialMensajes[indiceMensajeTutorial]);
+        }
 
         // Obtenemos la configuración del nivel actual desde el objeto 'niveles'
         config = niveles[nivelActual];
@@ -351,7 +406,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!primeraCarta) {
                     // Si no hay carta seleccionada aún, esta es la primera del turno
                     primeraCarta = carta;
+
+                    // Tutorial paso 1 → "Haz clic en otra carta"
+                    if (nivelActual === 1 && indiceMensajeTutorial === 0) {
+                        siguienteMensajeTutorial();
+                    }
                 } else {
+                    if (nivelActual === 1 && indiceMensajeTutorial === 1) {
+                        siguienteMensajeTutorial(); // Paso 2
+                    }
                     // Si ya hay una carta girada, esta es la segunda
                     segundaCarta = carta;
                     bloqueado = true; // Bloqueamos temporalmente nuevos clics
@@ -369,6 +432,16 @@ document.addEventListener("DOMContentLoaded", () => {
                             // Si el sonido está activado, reproducimos el efecto de acierto
                             if (window.sonidoActivo) sonidoAcierto.play();
 
+                            // Tutorial paso 3 → "Si coinciden..."
+                            if (nivelActual === 1 && indiceMensajeTutorial === 2) {
+                                siguienteMensajeTutorial();
+                            }
+
+                            // Tutorial paso 4 → "Completa todas las parejas..."
+                            else if (nivelActual === 1 && indiceMensajeTutorial === 3) {
+                                siguienteMensajeTutorial();
+                            }
+
                             if (window.modoJuego === 2) {
                                 if (jugadorActual === 1) puntosJ1++;
                                 else puntosJ2++;
@@ -381,6 +454,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                 // Si todas han sido acertadas, detenemos el cronómetro y mostramos mensaje final
                                 clearInterval(intervaloTiempo);
                                 mostrarMensajeFinal(intentos, puntosJ1, puntosJ2);
+
+                                // Tutorial paso 5 → "¡Bien hecho!"
+                                if (nivelActual === 1 && indiceMensajeTutorial === 4) {
+                                    siguienteMensajeTutorial();
+                                }
                             }
 
                         } else {
@@ -392,6 +470,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             if (window.modoJuego === 2) {
                                 jugadorActual = jugadorActual === 1 ? 2 : 1;
                                 spanJugador.textContent = jugadorActual;
+                            }
+
+                            // Tutorial paso 2 → "Si no coinciden..."
+                            if (nivelActual === 1 && indiceMensajeTutorial === 2) {
+                                siguienteMensajeTutorial();
                             }
                         }
 

@@ -45,6 +45,22 @@ body {
     text-align: center;
 }
 
+.tutorial-mensaje {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 53, 148, 0.95);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    z-index: 999;
+    max-width: 90%;
+    text-align: center;
+}
+
 /* Estilo general de todos los label */
 label {
   font-size: 1.2rem;
@@ -245,6 +261,28 @@ select {
     width: 90%;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     animation: aparecer 0.3s ease;
+}
+
+.mensaje-final {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #003594;
+    color: white;
+    padding: 20px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mensaje-final.visible {
+    opacity: 1;
 }
 
 @keyframes aparecer {
