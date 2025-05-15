@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Secciones principales
     const menu1 = document.getElementById("menu1");      // Menú principal
+    const menuModo = document.getElementById("menu-modo"); // Menú de modo de juego
     const menu2 = document.getElementById("menu2");      // Menú de selección de nivel
     const juego = document.getElementById("juego");      // Zona del juego
 
@@ -12,6 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnJugar = document.getElementById("btn-jugar");        // Botón "Jugar"
     const btnCreditos = document.getElementById("btn-creditos");  // Botón "Créditos"
     const btnSonido = document.getElementById("btn-sonido");      // Botón para activar/desactivar sonido
+
+    // Botones del menú de selección de modo de juego
+    const btnModo1 = document.getElementById("modo-1jugador");    // Botón "1 Jugador"
+    const btnModo2 = document.getElementById("modo-2jugadores");  // Botón "2 Jugadores"
+    const btnVolverModo = document.getElementById("volver-a-menu1"); // Botón "Volver" desde el menú de modo
 
     // Botones del menú de nivel
     const btnCancelar = document.getElementById("btn-cancelar");            // Botón para volver al menú principal
@@ -35,10 +41,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === NAVEGACIÓN ENTRE MENÚS ===
 
-    // Ir al menú de selección de nivel
+    // Ir al menú de selección de modo de juego
     btnJugar.addEventListener("click", () => {
         menu1.classList.add("oculto");
+        menuModo.classList.remove("oculto");
+    });
+
+    // Elegir modo "1 Jugador"
+    btnModo1.addEventListener("click", () => {
+        window.modoJuego = 1;
+        menuModo.classList.add("oculto");
         menu2.classList.remove("oculto");
+    });
+
+    // Elegir modo "2 Jugadores"
+    btnModo2.addEventListener("click", () => {
+        window.modoJuego = 2;
+        menuModo.classList.add("oculto");
+        menu2.classList.remove("oculto");
+    });
+
+    // Volver al menú principal desde el menú de modo
+    btnVolverModo.addEventListener("click", () => {
+        menuModo.classList.add("oculto");
+        menu1.classList.remove("oculto");
     });
 
     // Volver al menú principal desde el menú de niveles

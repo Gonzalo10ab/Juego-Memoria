@@ -8,6 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const spanTiempo = document.getElementById("tiempo"); // Muestra el cronómetro
     const botonPowerup = document.getElementById("powerup-revelar"); // Botón para usar el powerup
     const botonVolverMenu = document.getElementById("btn-volver-menu"); // Botón volver al menu
+    const spanJugador = document.getElementById("jugador-actual"); // Jugador actual (solo si hay 2 jugadores)
+    const spanPuntosJ1 = document.getElementById("puntos-j1"); // Puntuación jugador 1
+    const spanPuntosJ2 = document.getElementById("puntos-j2"); // Puntuación jugador 2
 
     // Instanciamos los sonidos
     const sonidoAcierto = new Audio("assets/sonidos/correct.mp3");
@@ -48,10 +51,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Muestra un mensaje final de victoria al completar el juego
-    function mostrarMensajeFinal(intentos) {
-        // Esperamos un poco antes de mostrarlo para que el último giro se vea
+    function mostrarMensajeFinal(intentos, puntosJ1, puntosJ2) {
         setTimeout(() => {
-            alert(`Enhorabuena pichita, lo has conseguido en ${intentos} intentos.`); // CAMBIAR POR UNA ALERTA CHULA
+            if (window.modoJuego === 2) {
+                let mensaje;
+                if (puntosJ1 > puntosJ2) {
+                    mensaje = `¡Jugador 1 gana con ${puntosJ1} puntos!`;
+                } else if (puntosJ2 > puntosJ1) {
+                    mensaje = `¡Jugador 2 gana con ${puntosJ2} puntos!`;
+                } else {
+                    mensaje = `¡Empate! Ambos tienen ${puntosJ1} puntos.`;
+                }
+                alert(mensaje);
+            } else {
+                alert(`Enhorabuena pichita, lo has conseguido en ${intentos} intentos.`); // CAMBIAR POR UNA ALERTA CHULA
+            }
         }, 300);
     }
 
@@ -283,9 +297,25 @@ document.addEventListener("DOMContentLoaded", () => {
         let segundaCarta = null;    // Almacena la segunda carta seleccionada
         let bloqueado = false;      // Evita que el jugador haga más clics mientras se comparan dos cartas
         let intentos = 0;           // Contador de intentos
+        let jugadorActual = 1;
+        let puntosJ1 = 0;
+        let puntosJ2 = 0;
 
-        // Mostramos el contador de intentos inicial (0)
+        const panelTurno = document.getElementById("turno-jugador");
+        const panelP2 = document.getElementById("p2-panel");
+
+        if (window.modoJuego === 2) {
+            panelTurno.style.display = "block";
+            panelP2.style.display = "inline";
+        } else {
+            panelTurno.style.display = "none";
+            panelP2.style.display = "none";
+        }
+        
         actualizarContador(intentos);
+        if (spanJugador) spanJugador.textContent = jugadorActual;
+        if (spanPuntosJ1) spanPuntosJ1.textContent = puntosJ1;
+        if (spanPuntosJ2) spanPuntosJ2.textContent = puntosJ2;
 
         // Si el nivel es contrarreloj, iniciamos el contrarreloj
         // Si no, iniciamos un cronometro
@@ -343,7 +373,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             // Si el sonido está activado, reproducimos el efecto de acierto
                             if (window.sonidoActivo) sonidoAcierto.play();
 
-                            // Comprobamos si ya no quedan más cartas por acertar
+                            if (window.modoJuego === 2) {
+                                if (jugadorActual === 1) puntosJ1++;
+                                else puntosJ2++;
+                                spanPuntosJ1.textContent = puntosJ1;
+                                spanPuntosJ2.textContent = puntosJ2;
+                            }
+
                             const cartasRestantes = document.querySelectorAll(".card:not(.acertada):not([data-clave='joker'])");
                             if (cartasRestantes.length === 0) {
                                 // Si todas han sido acertadas, detenemos el cronómetro y mostramos mensaje final
@@ -356,6 +392,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             primeraCarta.classList.remove("volteada");
                             segundaCarta.classList.remove("volteada");
                             if (window.sonidoActivo) sonidoFallo.play();
+
+                            if (window.modoJuego === 2) {
+                                jugadorActual = jugadorActual === 1 ? 2 : 1;
+                                spanJugador.textContent = jugadorActual;
+                            }
                         }
 
                         // Reiniciamos las variables para el siguiente turno
@@ -369,8 +410,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Añadimos la carta al tablero en el DOM
             tablero.appendChild(carta);
-            activarVibracionJokers();
         });
+
+        activarVibracionJokers();
     }
 
     // Evento que reinicia el juego al pulsar el botón
