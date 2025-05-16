@@ -305,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
         detenerTodosLosSonidos();
 
         // Obtenemos la categoría y el nivel actual desde variables globales (definidas en menus.js). Si no existen, usamos valores por defecto.
-        categoriaActual = window.categoriaActual || categorias.numeros;
+        categoriaActual = window.categoriaActual || categorias.frutas;
         nivelActual = window.nivelActual || 1;
 
         // Si el nivel es el tutorial (por ejemplo, nivel 99), iniciamos los mensajes
@@ -326,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Ajustamos el diseño del tablero en base al número de columnas del nivel
         tablero.style.gridTemplateColumns = `repeat(${config.columnas}, minmax(0, 1fr))`;
 
-        // Seleccionamos las cartas únicas según la categoría elegida (frutas, números, etc.) Solo tomamos las necesarias para el nivel actual
+        // Seleccionamos las cartas únicas según la categoría elegida (frutas, daw, davante, etc.) Solo tomamos las necesarias para el nivel actual
         let cartasUnicas = categoriaActual.slice(0, cantidadParejas);
 
         // Si el nivel tiene joker, sustituimos una carta por el joker
